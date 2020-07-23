@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -18,7 +19,13 @@ public class ButtController : MonoBehaviour
     public bool isDebugMode = false;
 
     private bool canMove = true;
-    // Start is called before the first frame update
+
+    #region Events
+
+    public static Action OnPlayerDied; 
+
+    #endregion
+    
     private void Start()
     {
         SetupButt();
@@ -69,6 +76,7 @@ public class ButtController : MonoBehaviour
 
     public void DisableMovement()
     {
+        OnPlayerDied?.Invoke();    // Did the player die AND have subscribers? Invoke.
         canMove = false;
     }
 }

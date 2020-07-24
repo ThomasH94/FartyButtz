@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -23,7 +24,17 @@ public class GameManager : MonoBehaviour
             Instance = this;
         }
     }
-    
+
+    private void OnEnable()
+    {
+        ButtController.OnPlayerDied += StopGame;
+    }
+
+    private void OnDisable()
+    {
+        ButtController.OnPlayerDied -= StopGame;
+    }
+
     [ContextMenu("Start Game")]
     private void StartGame()
     {
@@ -32,6 +43,21 @@ public class GameManager : MonoBehaviour
         {
             mover.GetComponent<Mover>().StartMoving();
         }
+    }
+
+    // Stops the current game in progress - the farting and jumping
+    private void StopGame()
+    {
+        foreach (GameObject mover in movers)
+        {
+            mover.GetComponent<Mover>().StopMoving();
+        }
+    }
+
+    // When the app is closed...might rename to "OnAppClosed"
+    private void EndGame()
+    {
+        
     }
 
     public void KillPlayer(ButtController buttController)

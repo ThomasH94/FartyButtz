@@ -12,7 +12,7 @@ public class SceneController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     [ContextMenu("Load Scene Routine")]
@@ -26,5 +26,11 @@ public class SceneController : MonoBehaviour
     {
         yield return new WaitForSeconds(2);
         SceneManager.LoadSceneAsync("Playground");
+    }
+
+    public void ReloadScene()
+    {
+        Scene currentScene = SceneManager.GetActiveScene();
+        SceneManager.LoadScene(currentScene.name);
     }
 }

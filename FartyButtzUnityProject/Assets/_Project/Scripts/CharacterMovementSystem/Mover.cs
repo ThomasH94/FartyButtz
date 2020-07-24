@@ -14,6 +14,11 @@ public class Mover : MonoBehaviour
         canMove = true;
     }
 
+    public void StopMoving()
+    {
+        canMove = false;
+    }
+
     private void FixedUpdate()
     {
         if (!canMove)

@@ -11,6 +11,8 @@ public class ScoreController : MonoBehaviour
     public TextMeshProUGUI scoreText;
     public int currentScore;
 
+    public static Action<int> ScoreUpdated;
+
     private void Awake()
     {
         // Singleton check
@@ -33,5 +35,7 @@ public class ScoreController : MonoBehaviour
     {
         currentScore += scoreAdjuster;
         scoreText.text = currentScore.ToString();
+        ScoreUpdated?.Invoke(currentScore);
     }
+    
 }

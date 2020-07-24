@@ -40,6 +40,7 @@ public class Mover : MonoBehaviour
 
     private void ReSpawn()
     {
+        // TODO: Set the position of this object equal to the last item in the pools position so it snaps to the end of it
         if (!setRandomY)
         {
             transform.position = moverData.respawnPosition;   

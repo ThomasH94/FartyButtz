@@ -920,6 +920,10 @@ MonoBehaviour:
   - {fileID: -3836522476485598025, guid: 0e8fd89daeee58445abb019d57f81ec5, type: 3}
   currentScoreText: {fileID: 1421048403}
   highScoreText: {fileID: 1932609321}
+  bronzeMedal: 1
+  silverMedal: 10
+  goldMedal: 20
+  platMedal: 50
   easeType: 16
 --- !u!114 &388911698
 MonoBehaviour:

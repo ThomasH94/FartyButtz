@@ -22,7 +22,7 @@ public class ButtController : MonoBehaviour
 
     #region Events
 
-    public static Action OnPlayerDied; 
+    public static Action OnPlayerDied;
 
     #endregion
     
@@ -79,4 +79,5 @@ public class ButtController : MonoBehaviour
         OnPlayerDied?.Invoke();    // Did the player die AND have subscribers? Invoke.
         canMove = false;
     }
+    
 }

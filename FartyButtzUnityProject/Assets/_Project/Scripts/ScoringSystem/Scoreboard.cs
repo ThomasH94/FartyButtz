@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class Scoreboard : MonoBehaviour
 {
     public GameObject scoreBoard;
-    [SerializeField] private Image medalImage;
+    [SerializeField] private Image medalImage = null;
     [SerializeField] private Sprite[] medalSprites = new Sprite[4]; 
     [SerializeField] private TextMeshProUGUI currentScoreText = null;
     [SerializeField] private TextMeshProUGUI highScoreText = null;
@@ -15,14 +15,14 @@ public class Scoreboard : MonoBehaviour
     
     private int highScore = 0;
 
-    private int bronzeMedal = 1;
-    private int silverMedal = 20;
-    private int goldMedal = 50;
-    private int platMedal = 100;
+    [SerializeField] private int bronzeMedal = 1;
+    [SerializeField] private int silverMedal = 10;
+    [SerializeField] private int goldMedal = 20;
+    [SerializeField] private int platMedal = 50;
     
     #endregion
 
-    [SerializeField] private LeanTweenType easeType;
+    [SerializeField] private LeanTweenType easeType = LeanTweenType.easeInOutSine;
 
     private void Start()
     {
@@ -59,14 +59,14 @@ public class Scoreboard : MonoBehaviour
 
     private void UpdateScoreBoard(int scoreAmount)
     {
-        currentScoreText.text = scoreAmount.ToString();
+        currentScoreText.text = scoreAmount.ToString("000");
 
         if (scoreAmount > highScore)
         {
             highScore = scoreAmount;
         }
         
-        highScoreText.text = highScore.ToString();
+        highScoreText.text = highScore.ToString("000");
         SetToken(scoreAmount);
     }
     

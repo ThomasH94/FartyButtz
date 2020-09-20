@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -9,10 +8,10 @@ using UnityEngine.SceneManagement;
 public class SceneController : MonoBehaviour
 {
     public Animator screenFadeAnimator;
-    // Start is called before the first frame update
-    void Start()
+    
+    private void Awake()
     {
-
+        // Create singleton reference with Don't Destroy On Load
     }
 
     [ContextMenu("Load Scene Routine")]
@@ -25,12 +24,18 @@ public class SceneController : MonoBehaviour
     private IEnumerator LoadSceneWithFadeRoutine()
     {
         yield return new WaitForSeconds(2);
-        SceneManager.LoadSceneAsync("Playground");
+        SceneManager.LoadSceneAsync("Sandbox");
     }
 
     public void ReloadScene()
     {
         Scene currentScene = SceneManager.GetActiveScene();
         SceneManager.LoadScene(currentScene.name);
+    }
+
+    // TODO: Bring up a confirmation, then make this a coroutine that fades out
+    public void QuitGame()
+    {
+        Application.Quit();
     }
 }

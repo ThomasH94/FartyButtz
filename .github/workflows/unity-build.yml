@@ -1,0 +1,92 @@
+name: Unity Mobile Build
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-android:
+    name: Android Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Cache Library
+        uses: actions/cache@v4
+        with:
+          path: Library
+          key: Library-Android-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
+
+      - name: Build Android (Dev)
+        uses: game-ci/unity-builder@v4
+        with:
+          unityversion: 6000.3.13f1
+          targetPlatform: Android
+          buildMethod: BuildScript.BuildFromCommandLine
+          customParameters: "-platform Android -buildType Development"
+
+      - name: Upload Artifact (Android Dev)
+        uses: actions/upload-artifact@v4
+        with:
+          name: Android-Dev
+          path: Builds/Android/Development
+
+      - name: Build Android (Release)
+        uses: game-ci/unity-builder@v4
+        with:
+          unityversion: 6000.3.13f1
+          targetPlatform: Android
+          buildMethod: BuildScript.BuildFromCommandLine
+          customParameters: "-platform Android -buildType Release"
+
+      - name: Upload Artifact (Android Release)
+        uses: actions/upload-artifact@v4
+        with:
+          name: Android-Release
+          path: Builds/Android/Release
+
+  build-ios:
+    name: iOS Build
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Cache Library
+        uses: actions/cache@v4
+        with:
+          path: Library
+          key: Library-iOS-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
+
+      - name: Build iOS (Dev)
+        uses: game-ci/unity-builder@v4
+        with:
+          unityversion: 6000.3.13f1
+          targetPlatform: iOS
+          buildMethod: BuildScript.BuildFromCommandLine
+          customParameters: "-platform iOS -buildType Development"
+
+      - name: Upload Artifact (iOS Dev)
+        uses: actions/upload-artifact@v4
+        with:
+          name: iOS-Dev
+          path: Builds/iOS/Development
+
+      - name: Build iOS (Release)
+        uses: game-ci/unity-builder@v4
+        with:
+          unityversion: 6000.3.13f1
+          targetPlatform: iOS
+          buildMethod: BuildScript.BuildFromCommandLine
+          customParameters: "-platform iOS -buildType Release"
+
+      - name: Upload Artifact (iOS Release)
+        uses: actions/upload-artifact@v4
+        with:
+          name: iOS-Release
+          path: Builds/iOS/Release

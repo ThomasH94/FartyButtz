@@ -2,14 +2,28 @@ name: Unity Mobile Build
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - main
+    inputs:
+      platform:
+        description: "Platform to build"
+        required: true
+        default: "Android"
+        type: choice
+        options:
+          - Android
+          - iOS
+      buildType:
+        description: "Build type"
+        required: true
+        default: "Development"
+        type: choice
+        options:
+          - Development
+          - Release
 
 jobs:
-  build-android:
-    name: Android Build
-    runs-on: ubuntu-latest
+  build:
+    name: Unity Build
+    runs-on: ${{ inputs.platform == 'iOS' && 'macos-latest' || 'ubuntu-latest' }}
 
     steps:
       - name: Checkout
@@ -19,74 +33,21 @@ jobs:
         uses: actions/cache@v4
         with:
           path: Library
-          key: Library-Android-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
+          key: Library-${{ inputs.platform }}-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
 
-      - name: Build Android (Dev)
+      - name: Build
         uses: game-ci/unity-builder@v4
+        env:
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
-          unityversion: 6000.3.13f1
-          targetPlatform: Android
+          unityVersion: 6000.3.13f1
+          targetPlatform: ${{ inputs.platform }}
           buildMethod: BuildScript.BuildFromCommandLine
-          customParameters: "-platform Android -buildType Development"
+          customParameters: "-platform ${{ inputs.platform }} -buildType ${{ inputs.buildType }}"
 
-      - name: Upload Artifact (Android Dev)
+      - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Android-Dev
-          path: Builds/Android/Development
-
-      - name: Build Android (Release)
-        uses: game-ci/unity-builder@v4
-        with:
-          unityversion: 6000.3.13f1
-          targetPlatform: Android
-          buildMethod: BuildScript.BuildFromCommandLine
-          customParameters: "-platform Android -buildType Release"
-
-      - name: Upload Artifact (Android Release)
-        uses: actions/upload-artifact@v4
-        with:
-          name: Android-Release
-          path: Builds/Android/Release
-
-  build-ios:
-    name: iOS Build
-    runs-on: macos-latest
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Cache Library
-        uses: actions/cache@v4
-        with:
-          path: Library
-          key: Library-iOS-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
-
-      - name: Build iOS (Dev)
-        uses: game-ci/unity-builder@v4
-        with:
-          unityversion: 6000.3.13f1
-          targetPlatform: iOS
-          buildMethod: BuildScript.BuildFromCommandLine
-          customParameters: "-platform iOS -buildType Development"
-
-      - name: Upload Artifact (iOS Dev)
-        uses: actions/upload-artifact@v4
-        with:
-          name: iOS-Dev
-          path: Builds/iOS/Development
-
-      - name: Build iOS (Release)
-        uses: game-ci/unity-builder@v4
-        with:
-          unityversion: 6000.3.13f1
-          targetPlatform: iOS
-          buildMethod: BuildScript.BuildFromCommandLine
-          customParameters: "-platform iOS -buildType Release"
-
-      - name: Upload Artifact (iOS Release)
-        uses: actions/upload-artifact@v4
-        with:
-          name: iOS-Release
-          path: Builds/iOS/Release
+          name: ${{ inputs.platform }}-${{ inputs.buildType }}
+          path: Builds/${{ inputs.platform }}/${{ inputs.buildType }}

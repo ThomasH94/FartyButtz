@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ea242a6ba4663614a988b114331e0557, type: 3}
+  m_Name: Butt_Default_SFX
+  m_EditorClassIdentifier: Assembly-CSharp::SfxData
+  defaultVolume: 1
+  priority: 128
+  tag: 
+  clips:
+  - clip: {fileID: 8300000, guid: 5e9a639b1bcc8624c8fc380e50388cb0, type: 3}
+    weight: 1
+  - clip: {fileID: 8300000, guid: 4a3c54b94d4c59d48b8d05d76c47ef0a, type: 3}
+    weight: 1
+  - clip: {fileID: 8300000, guid: fdcb9b0b45ecec3418fe576375b3d1e2, type: 3}
+    weight: 1
+  pitchRange: {x: 0.92, y: 1}
+  volumeRange: {x: 1, y: 1}
+  spatial: 0
+  spatialBlend: 1
+  oneShot: 1
+  loop: 0

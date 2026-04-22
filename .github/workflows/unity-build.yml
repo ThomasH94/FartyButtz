@@ -11,7 +11,6 @@ on:
         options:
           - Android
           - iOS
-
       buildType:
         description: "Build type"
         required: true
@@ -37,15 +36,15 @@ jobs:
         with:
           path: Library
           key: Library-${{ inputs.platform }}-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
-
-      # 🔑 THIS is the ONLY licensing step you need
-      - name: Activate Unity
-        uses: game-ci/unity-activate@v2
-        env:
-          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          restore-keys: |
+            Library-${{ inputs.platform }}-
+            Library-
 
       - name: Build Project
         uses: game-ci/unity-builder@v4
+        env:
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
           unityVersion: 6000.3.13f1
           targetPlatform: ${{ inputs.platform }}

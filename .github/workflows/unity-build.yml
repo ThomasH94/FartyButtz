@@ -40,11 +40,14 @@ jobs:
             Library-${{ inputs.platform }}-
             Library-
 
-      - name: Build Project
-        uses: game-ci/unity-builder@v4
+      - name: Activate Unity License
+        uses: matchworkshop/unity-license-activate@v1
         env:
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+
+      - name: Build Project
+        uses: game-ci/unity-builder@v4
         with:
           unityVersion: 6000.3.13f1
           targetPlatform: ${{ inputs.platform }}

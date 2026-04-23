@@ -48,10 +48,11 @@ jobs:
           unityVersion: 6000.3.13f1
           targetPlatform: ${{ inputs.platform }}
           buildMethod: BuildScript.BuildFromCommandLine
+          androidExportType: ${{ inputs.buildType == 'Release' && 'androidAppBundle' || 'androidPackage' }}
           customParameters: "-platform ${{ inputs.platform }} -buildType ${{ inputs.buildType }}"
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Build-${{ inputs.platform }}-${{ inputs.buildType }}
+          name: FartyButtz-${{ inputs.platform }}-${{ inputs.buildType }}
           path: Builds/${{ inputs.platform }}/${{ inputs.buildType }}

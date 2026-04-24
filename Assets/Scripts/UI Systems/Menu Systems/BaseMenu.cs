@@ -1,7 +1,8 @@
 using Cysharp.Threading.Tasks;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
-public abstract class BaseMenu : MonoBehaviour, IMenu
+public abstract class BaseMenu : SerializedMonoBehaviour, IMenu
 {
 	[SerializeField]
 	protected GameObject m_ContentRect;

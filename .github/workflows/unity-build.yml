@@ -1,0 +1,58 @@
+name: Unity Mobile Build
+on:
+  workflow_dispatch:
+    inputs:
+      platform:
+        description: "Platform to build"
+        required: true
+        default: "Android"
+        type: choice
+        options:
+          - Android
+          - iOS
+      buildType:
+        description: "Build type"
+        required: true
+        default: "Development"
+        type: choice
+        options:
+          - Development
+          - Release
+
+jobs:
+  build:
+    runs-on: ${{ inputs.platform == 'iOS' && 'macos-latest' || 'ubuntu-latest' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          lfs: true
+
+      - name: Cache Library
+        uses: actions/cache@v4
+        with:
+          path: Library
+          key: Library-${{ inputs.platform }}-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
+          restore-keys: |
+            Library-${{ inputs.platform }}-
+            Library-
+
+      - name: Build Project
+        uses: game-ci/unity-builder@v4
+        env:
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
+        with:
+          unityVersion: 6000.3.13f1
+          targetPlatform: ${{ inputs.platform }}
+          buildMethod: BuildScript.BuildFromCommandLine
+          androidExportType: ${{ inputs.buildType == 'Release' && 'androidAppBundle' || 'androidPackage' }}
+          customParameters: "-platform ${{ inputs.platform }} -buildType ${{ inputs.buildType }}"
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: FartyButtz-${{ inputs.platform }}-${{ inputs.buildType }}
+          path: Builds/${{ inputs.platform }}/${{ inputs.buildType }}

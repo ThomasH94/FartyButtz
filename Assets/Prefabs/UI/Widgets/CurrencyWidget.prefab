@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2926941452182784481}
   m_Layer: 5
-  m_Name: CurrencyWidget_Coins
+  m_Name: CurrencyWidget
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

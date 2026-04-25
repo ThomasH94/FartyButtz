@@ -1,11 +1,16 @@
 using System;
 using System.Linq;
 using UnityEditor;
+using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
 using UnityEngine;
 
 public static class BuildScript
 {
+    // ------------------------
+    // Scenes
+    // ------------------------
+
     private static string[] GetScenes()
     {
         return EditorBuildSettings.scenes
@@ -13,6 +18,10 @@ public static class BuildScript
             .Select(s => s.path)
             .ToArray();
     }
+
+    // ------------------------
+    // Build entry points
+    // ------------------------
 
     public static void BuildAndroidDev() =>
         Build(BuildPlatform.Android, BuildType.Development);
@@ -26,10 +35,15 @@ public static class BuildScript
     public static void BuildiOSRelease() =>
         Build(BuildPlatform.iOS, BuildType.Release);
 
+    // ------------------------
+    // CLI entry point (GitHub Actions)
+    // ------------------------
+
     public static void BuildFromCommandLine()
     {
         var platformArg = GetArg("-platform");
         var buildTypeArg = GetArg("-buildType");
+        var buildNumberArg = GetOptionalArg("-buildNumber");
 
         if (!Enum.TryParse(platformArg, true, out BuildPlatform platform))
             throw new Exception($"Invalid platform: {platformArg}");
@@ -37,24 +51,29 @@ public static class BuildScript
         if (!Enum.TryParse(buildTypeArg, true, out BuildType buildType))
             throw new Exception($"Invalid build type: {buildTypeArg}");
 
+        BuildMetadata.SetBuildNumber(buildNumberArg);
+
         Build(platform, buildType);
     }
 
+    // ------------------------
+    // Core build pipeline
+    // ------------------------
+
     private static void Build(BuildPlatform platform, BuildType buildType)
     {
-        var config = BuildConfig.Create(platform, buildType);
-
         Debug.Log($"Starting build: {platform} | {buildType}");
 
         SwitchPlatform(platform);
         ApplyPlatformSettings(platform, buildType);
+        ApplyDefines(platform, buildType);
 
         var buildPlayerOptions = new BuildPlayerOptions
         {
             scenes = GetScenes(),
-            locationPathName = GetBuildPath(config),
+            locationPathName = GetBuildPath(platform, buildType),
             target = GetBuildTarget(platform),
-            options = config.Options
+            options = GetBuildOptions(buildType)
         };
 
         var report = BuildPipeline.BuildPlayer(buildPlayerOptions);
@@ -69,6 +88,10 @@ public static class BuildScript
         Debug.Log($"Build succeeded: {summary.outputPath}");
     }
 
+    // ------------------------
+    // Platform switching
+    // ------------------------
+
     private static void SwitchPlatform(BuildPlatform platform)
     {
         var target = GetBuildTarget(platform);
@@ -81,13 +104,18 @@ public static class BuildScript
         }
     }
 
+    // ------------------------
+    // Platform settings
+    // ------------------------
+
     private static void ApplyPlatformSettings(BuildPlatform platform, BuildType buildType)
     {
         switch (platform)
         {
             case BuildPlatform.Android:
-                EditorUserBuildSettings.buildAppBundle = true; // AAB for Play Store
-                PlayerSettings.Android.useCustomKeystore = false; // change later for release
+                // Dev = APK, Release = AAB
+                EditorUserBuildSettings.buildAppBundle = buildType == BuildType.Release;
+                PlayerSettings.Android.useCustomKeystore = buildType == BuildType.Release;
                 break;
 
             case BuildPlatform.iOS:
@@ -101,19 +129,102 @@ public static class BuildScript
         }
     }
 
-    private static string GetBuildPath(BuildConfig config)
-    {
-        switch (config.Platform)
-        {
-            case BuildPlatform.Android:
-                return $"{config.OutputPath}/{config.BuildName}.aab";
+    // ------------------------
+    // Build options
+    // ------------------------
 
-            case BuildPlatform.iOS:
-                return $"{config.OutputPath}";
+    private static BuildOptions GetBuildOptions(BuildType buildType)
+    {
+        return buildType switch
+        {
+            BuildType.Development =>
+                BuildOptions.Development |
+                BuildOptions.AllowDebugging |
+                BuildOptions.ConnectWithProfiler,
+
+            BuildType.Release =>
+                BuildOptions.None,
+
+            _ => BuildOptions.None
+        };
+    }
+
+    // ------------------------
+    // Defines (Unity 6+ correct API)
+    // ------------------------
+
+    private static void ApplyDefines(BuildPlatform platform, BuildType buildType)
+    {
+        NamedBuildTarget target = GetNamedBuildTarget(platform);
+
+        string existing = PlayerSettings.GetScriptingDefineSymbols(target);
+
+        // clean old build defines
+        existing = existing
+            .Replace("DEV_BUILD", "")
+            .Replace("RELEASE_BUILD", "")
+            .Replace(";;", ";")
+            .Trim(';');
+
+        string buildDefine = buildType switch
+        {
+            BuildType.Development => "DEV_BUILD",
+            BuildType.Release => "RELEASE_BUILD",
+            _ => ""
+        };
+
+        string final;
+
+        if (string.IsNullOrWhiteSpace(existing))
+        {
+            final = buildDefine;
+        }
+        else if (string.IsNullOrWhiteSpace(buildDefine))
+        {
+            final = existing;
+        }
+        else
+        {
+            final = $"{existing};{buildDefine}";
         }
 
-        throw new Exception("Unsupported platform");
+        final = final.Replace(";;", ";").Trim(';');
+
+        PlayerSettings.SetScriptingDefineSymbols(target, final);
     }
+
+    private static NamedBuildTarget GetNamedBuildTarget(BuildPlatform platform)
+    {
+        return platform switch
+        {
+            BuildPlatform.Android => NamedBuildTarget.Android,
+            BuildPlatform.iOS => NamedBuildTarget.iOS,
+            _ => throw new Exception("Unsupported platform")
+        };
+    }
+
+    // ------------------------
+    // Output path
+    // ------------------------
+
+    private static string GetBuildPath(BuildPlatform platform, BuildType buildType)
+    {
+        switch (platform)
+        {
+            case BuildPlatform.Android:
+                return $"{buildType}/{platform}/FartyButtz.aab";
+
+            case BuildPlatform.iOS:
+                return $"{buildType}/{platform}";
+
+            default:
+                throw new Exception("Unsupported platform");
+        }
+    }
+
+    // ------------------------
+    // Unity build target mapping
+    // ------------------------
 
     private static BuildTarget GetBuildTarget(BuildPlatform platform)
     {
@@ -125,9 +236,14 @@ public static class BuildScript
         };
     }
 
+    // ------------------------
+    // Args
+    // ------------------------
+
     private static string GetArg(string name)
     {
         var args = Environment.GetCommandLineArgs();
+
         for (int i = 0; i < args.Length; i++)
         {
             if (args[i] == name && i + 1 < args.Length)
@@ -136,4 +252,21 @@ public static class BuildScript
 
         throw new Exception($"Missing argument: {name}");
     }
+
+    private static string GetOptionalArg(string name)
+    {
+        var args = Environment.GetCommandLineArgs();
+
+        for (int i = 0; i < args.Length; i++)
+        {
+            if (args[i] == name && i + 1 < args.Length)
+                return args[i + 1];
+        }
+
+        return null;
+    }
 }
+
+// ------------------------
+// Runtime build metadata
+// ------------------------

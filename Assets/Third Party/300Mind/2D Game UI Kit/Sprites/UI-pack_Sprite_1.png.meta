@@ -2098,7 +2098,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: UI-pack_Sprite_1_79
+      name: UI_Close_Icon
       rect:
         serializedVersion: 2
         x: 1601
@@ -2196,13 +2196,13 @@ TextureImporter:
       UI-pack_Sprite_1_76: 4294396834851167543
       UI-pack_Sprite_1_77: -1452040262866815692
       UI-pack_Sprite_1_78: 8580286285322991341
-      UI-pack_Sprite_1_79: 7887720934130920627
       UI-pack_Sprite_1_8: 9136243195103690455
       UI-pack_Sprite_1_80: 4919465289085303430
       UI-pack_Sprite_1_9: 6344727610479804966
       UI_Blue_Bar_Large: -1322464374932762594
       UI_Circle_Green: 6881614851481631744
       UI_Claim_Gold: 2637422141927586871
+      UI_Close_Icon: 7887720934130920627
       UI_Coin: 2211318171991514223
       UI_Coins_Huge: -419350384077510912
       UI_Coins_Large: 6360151145083682662

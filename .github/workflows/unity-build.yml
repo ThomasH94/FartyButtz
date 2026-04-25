@@ -62,8 +62,12 @@ jobs:
           androidExportType: ${{ steps.export_type.outputs.type }}
           customParameters: "-platform ${{ inputs.platform }} -buildType ${{ inputs.buildType }}"
 
+      - name: Find build output
+        if: always()
+        run: find . -name "*.apk" -o -name "*.aab" -o -name "*.ipa" 2>/dev/null
+
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: FartyButtz_${{ inputs.platform }}_${{ inputs.buildType }}_v${{ steps.build.outputs.buildVersion }}
-          path: Builds/${{ inputs.platform }}/${{ inputs.buildType }}
+          path: ${{ inputs.buildType }}/${{ inputs.platform }}

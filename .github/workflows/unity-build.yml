@@ -38,7 +38,17 @@ jobs:
             Library-${{ inputs.platform }}-
             Library-
 
+      - name: Set export type
+        id: export_type
+        run: |
+          if [ "${{ inputs.buildType }}" = "Release" ]; then
+            echo "type=androidAppBundle" >> $GITHUB_OUTPUT
+          else
+            echo "type=androidPackage" >> $GITHUB_OUTPUT
+          fi
+
       - name: Build Project
+        id: build
         uses: game-ci/unity-builder@v4
         env:
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
@@ -48,11 +58,12 @@ jobs:
           unityVersion: 6000.3.13f1
           targetPlatform: ${{ inputs.platform }}
           buildMethod: BuildScript.BuildFromCommandLine
-          androidExportType: ${{ inputs.buildType == 'Release' && 'androidAppBundle' || 'androidPackage' }}
+          versioning: Semantic
+          androidExportType: ${{ steps.export_type.outputs.type }}
           customParameters: "-platform ${{ inputs.platform }} -buildType ${{ inputs.buildType }}"
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: FartyButtz-${{ inputs.platform }}-${{ inputs.buildType }}
+          name: FartyButtz_${{ inputs.platform }}_${{ inputs.buildType }}_v${{ steps.build.outputs.buildVersion }}
           path: Builds/${{ inputs.platform }}/${{ inputs.buildType }}

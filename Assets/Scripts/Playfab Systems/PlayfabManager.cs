@@ -42,6 +42,7 @@ public class PlayFabManager : SingletonMonoBehaviour<PlayFabManager>
     public void Logout()
     {
         PlayFabClientAPI.ForgetAllCredentials();
+        SessionManager.Instance.ClearSession();
         PlayFabId = null;
         DisplayName = null;
         IsLoggedIn = false;

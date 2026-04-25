@@ -1,17 +1,19 @@
 using UnityEngine;
 
 /// <summary>
-/// Game entry point.
+/// Game entry point. Owns the full startup sequence including silent re-login.
 ///
-/// Startup sequence:
-///   1. PlayFabManager initializes (Awake, sets Title ID)
-///   2. GameManager opens the LoginMenu — the player decides how to authenticate
-///   3. LoginMenu calls AuthManager (guest / email / platform)
-///   4. On PlayFabLoginSuccessPayload -> load player data + inventory in parallel
-///   5. On PlayerDataLoadedPayload    -> game is fully ready, open MainMenu
+/// Launch flow:
+///   A) Returning player (saved session exists):
+///      Silent login attempt -> success -> load data -> MainMenu
+///                           -> fail   -> clear session -> show LoginMenu
 ///
-/// The login decision lives in LoginMenu, not here. GameManager only reacts
-/// to the result and drives the post-login data loading sequence.
+///   B) New player (no saved session):
+///      Show LoginMenu immediately
+///
+/// Post-login (both flows):
+///   PlayFabLoginSuccessPayload -> load PlayerData + Inventory in parallel
+///   PlayerDataLoadedPayload    -> open MainMenu
 /// </summary>
 [DefaultExecutionOrder(-1)]
 public class GameManager : SingletonMonoBehaviour<GameManager>
@@ -21,14 +23,22 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
         base.Awake();
         EventBus.Subscribe<PlayFabLoginSuccessPayload>(OnLoginSuccess);
         EventBus.Subscribe<PlayFabLoginFailedPayload>(OnLoginFailed);
+        EventBus.Subscribe<PlayFabSilentLoginFailedPayload>(OnSilentLoginFailed);
         EventBus.Subscribe<PlayerDataLoadedPayload>(OnPlayerDataLoaded);
     }
 
     private void Start()
     {
-        // Hand off to the player — they choose guest, email, or register
-        EventBus.Publish(new MenuRequestOpenPayload(typeof(DebugInfoMenu), null));
-        EventBus.Publish(new MenuRequestOpenPayload(typeof(LoginMenu), null));
+        if (SessionManager.Instance.HasSavedSession())
+        {
+            Debug.Log("[GameManager] Saved session found — attempting silent login...");
+            AuthManager.Instance.LoginWithSavedSession();
+        }
+        else
+        {
+            Debug.Log("[GameManager] No saved session — showing login screen.");
+            ShowLoginMenu();
+        }
     }
 
     // -------------------------------------------------------------------------
@@ -44,19 +54,45 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
     private void OnPlayerDataLoaded(PlayerDataLoadedPayload payload)
     {
         Debug.Log("[GameManager] All data loaded. Opening main menu.");
-        EventBus.Publish(new MenuRequestOpenPayload(typeof(MainMenu), null, true));
+        EventBus.Publish(new MenuRequestOpenPayload(typeof(MainMenu), null));
     }
 
+    // -------------------------------------------------------------------------
+    // FAILURE HANDLING
+    // -------------------------------------------------------------------------
+
+    /// <summary>
+    /// A manual login attempt failed (wrong password, network error etc).
+    /// LoginMenu owns the error display — nothing to do here.
+    /// </summary>
     private void OnLoginFailed(PlayFabLoginFailedPayload payload)
     {
-        Debug.LogError($"[GameManager] Login failed: {payload.ErrorMessage}");
-        // LoginMenu handles showing the error to the player — nothing to do here
+        Debug.LogWarning($"[GameManager] Login failed: {payload.ErrorMessage}");
+    }
+
+    /// <summary>
+    /// Silent re-login failed — session was stale or revoked.
+    /// Session is already cleared by AuthManager. Just show the login screen.
+    /// </summary>
+    private void OnSilentLoginFailed(PlayFabSilentLoginFailedPayload payload)
+    {
+        Debug.LogWarning($"[GameManager] Silent login failed: {payload.ErrorMessage}. Showing login screen.");
+        ShowLoginMenu();
+    }
+
+    // -------------------------------------------------------------------------
+    // HELPERS
+    // -------------------------------------------------------------------------
+    private void ShowLoginMenu()
+    {
+        EventBus.Publish(new MenuRequestOpenPayload(typeof(LoginMenu), null));
     }
 
     private void OnDestroy()
     {
         EventBus.Unsubscribe<PlayFabLoginSuccessPayload>(OnLoginSuccess);
         EventBus.Unsubscribe<PlayFabLoginFailedPayload>(OnLoginFailed);
+        EventBus.Unsubscribe<PlayFabSilentLoginFailedPayload>(OnSilentLoginFailed);
         EventBus.Unsubscribe<PlayerDataLoadedPayload>(OnPlayerDataLoaded);
     }
 }

@@ -27,6 +27,17 @@ public class PlayFabLoginFailedPayload
     public PlayFabLoginFailedPayload(string errorMessage) => ErrorMessage = errorMessage;
 }
 
+/// <summary>
+/// Published when a silent re-login attempt fails (stale or invalid session).
+/// GameManager handles this by falling through to LoginMenu.
+/// Separate from PlayFabLoginFailedPayload so LoginMenu doesn't react to it.
+/// </summary>
+public class PlayFabSilentLoginFailedPayload
+{
+    public string ErrorMessage { get; }
+    public PlayFabSilentLoginFailedPayload(string errorMessage) => ErrorMessage = errorMessage;
+}
+
 /// <summary>Published when a new email account is successfully registered.</summary>
 public class PlayFabRegisterSuccessPayload
 {

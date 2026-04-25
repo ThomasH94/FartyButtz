@@ -70,4 +70,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: FartyButtz_${{ inputs.platform }}_${{ inputs.buildType }}_v${{ steps.build.outputs.buildVersion }}
-          path: build/${{ inputs.platform }}
+          path: ${{ inputs.buildType }}/${{ inputs.platform }}

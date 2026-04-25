@@ -212,7 +212,8 @@ public static class BuildScript
         switch (platform)
         {
             case BuildPlatform.Android:
-                return $"{buildType}/{platform}/FartyButtz.aab";
+                string ext = buildType == BuildType.Release ? "aab" : "apk";
+                return $"{buildType}/{platform}/{Application.productName}.{ext}";
 
             case BuildPlatform.iOS:
                 return $"{buildType}/{platform}";

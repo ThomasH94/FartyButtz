@@ -29,6 +29,21 @@ jobs:
           fetch-depth: 0
           lfs: true
 
+      - name: Notify ClickUp - Build Started
+        run: |
+          PLATFORM="${{ inputs.platform }}"
+          BUILDTYPE="${{ inputs.buildType }}"
+          ACTOR="${{ github.actor }}"
+          RUN_URL="https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+
+          curl -X POST "https://api.clickup.com/api/v3/workspaces/9014314101/chat/channels/8cmq13n-8854/messages" \
+            -H "Authorization: ${{ secrets.CLICKUP_API_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d "{
+              \"content_format\": \"text/md\",
+              \"content\": \"🔨 **FartyButtz Build Started**\nPlatform: $PLATFORM | Type: $BUILDTYPE\nTriggered by: $ACTOR\n[View Run]($RUN_URL)\"
+            }"
+
       - name: Cache Library
         uses: actions/cache@v4
         with:
@@ -67,7 +82,37 @@ jobs:
         run: find . -name "*.apk" -o -name "*.aab" -o -name "*.ipa" 2>/dev/null
 
       - name: Upload Artifact
+        id: upload
         uses: actions/upload-artifact@v4
         with:
           name: FartyButtz_${{ inputs.platform }}_${{ inputs.buildType }}_v${{ steps.build.outputs.buildVersion }}
           path: ${{ inputs.buildType }}/${{ inputs.platform }}
+
+      - name: Notify ClickUp - Build Result
+        if: always()
+        run: |
+          STATUS="${{ job.status }}"
+          VERSION="v${{ steps.build.outputs.buildVersion }}"
+          PLATFORM="${{ inputs.platform }}"
+          BUILDTYPE="${{ inputs.buildType }}"
+          ACTOR="${{ github.actor }}"
+          RUN_URL="https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          ARTIFACT_NAME="FartyButtz_${PLATFORM}_${BUILDTYPE}_${VERSION}"
+
+          if [ "$STATUS" = "success" ]; then
+            EMOJI="✅"
+            STATUS_TEXT="Build Succeeded"
+            ARTIFACT_LINE="\nArtifact: [${ARTIFACT_NAME}]($RUN_URL)"
+          else
+            EMOJI="❌"
+            STATUS_TEXT="Build Failed"
+            ARTIFACT_LINE="\n[View logs for details]($RUN_URL)"
+          fi
+
+          curl -X POST "https://api.clickup.com/api/v3/workspaces/9014314101/chat/channels/8cmq13n-8854/messages" \
+            -H "Authorization: ${{ secrets.CLICKUP_API_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d "{
+              \"content_format\": \"text/md\",
+              \"content\": \"$EMOJI **FartyButtz $STATUS_TEXT**\nVersion: $VERSION\nPlatform: $PLATFORM | Type: $BUILDTYPE\nTriggered by: $ACTOR$ARTIFACT_LINE\"
+            }"

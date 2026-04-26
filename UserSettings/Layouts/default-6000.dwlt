@@ -19,7 +19,7 @@ MonoBehaviour:
     width: 1920
     height: 989
   m_ShowMode: 4
-  m_Title: Project
+  m_Title: Console
   m_RootView: {fileID: 2}
   m_MinSize: {x: 875, y: 300}
   m_MaxSize: {x: 10000, y: 10000}
@@ -121,7 +121,7 @@ MonoBehaviour:
   m_MinSize: {x: 500, y: 112}
   m_MaxSize: {x: 40480, y: 16192}
   vertical: 0
-  controlID: 9833
+  controlID: 132
   draggingID: 0
 --- !u!114 &6
 MonoBehaviour:
@@ -147,7 +147,7 @@ MonoBehaviour:
   m_MinSize: {x: 200, y: 112}
   m_MaxSize: {x: 16192, y: 16192}
   vertical: 1
-  controlID: 9944
+  controlID: 26
   draggingID: 0
 --- !u!114 &7
 MonoBehaviour:
@@ -173,7 +173,7 @@ MonoBehaviour:
   m_MinSize: {x: 200, y: 56}
   m_MaxSize: {x: 16192, y: 8096}
   vertical: 0
-  controlID: 9945
+  controlID: 27
   draggingID: 0
 --- !u!114 &8
 MonoBehaviour:
@@ -1342,33 +1342,7 @@ MonoBehaviour:
       m_LastClickedID:
         m_Data: 0
       m_ExpandedIDs:
-      - m_Data: -30900
-      - m_Data: -24276
-      - m_Data: -24240
-      - m_Data: -24234
-      - m_Data: -22626
-      - m_Data: -22590
-      - m_Data: -22584
-      - m_Data: -15786
-      - m_Data: -15782
-      - m_Data: -15778
-      - m_Data: -15772
-      - m_Data: -6016
-      - m_Data: -6006
-      - m_Data: -6000
-      - m_Data: -5994
-      - m_Data: -5958
-      - m_Data: -5952
-      - m_Data: -1354
-      - m_Data: -12
-      - m_Data: 29986
-      - m_Data: 30012
-      - m_Data: 30018
-      - m_Data: 30024
-      - m_Data: 30046
-      - m_Data: 39036
-      - m_Data: 39058
-      - m_Data: 39070
+      - m_Data: -1356
       m_RenameOverlay:
         m_UserAcceptedRename: 0
         m_Name: 
@@ -1466,24 +1440,24 @@ MonoBehaviour:
       m_Data: 30612
     m_ExpandedIDs:
     - m_Data: 0
+    - m_Data: 31458
+    - m_Data: 31460
+    - m_Data: 31462
+    - m_Data: 31464
+    - m_Data: 31466
+    - m_Data: 31468
+    - m_Data: 31470
+    - m_Data: 31472
+    - m_Data: 31474
+    - m_Data: 31476
+    - m_Data: 31478
+    - m_Data: 31480
+    - m_Data: 31482
     - m_Data: 31484
     - m_Data: 31486
     - m_Data: 31488
     - m_Data: 31490
     - m_Data: 31492
-    - m_Data: 31494
-    - m_Data: 31496
-    - m_Data: 31498
-    - m_Data: 31500
-    - m_Data: 31502
-    - m_Data: 31504
-    - m_Data: 31506
-    - m_Data: 31508
-    - m_Data: 31510
-    - m_Data: 31512
-    - m_Data: 31514
-    - m_Data: 31516
-    - m_Data: 31518
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -1516,24 +1490,24 @@ MonoBehaviour:
       m_Data: 0
     m_ExpandedIDs:
     - m_Data: 0
+    - m_Data: 31458
+    - m_Data: 31460
+    - m_Data: 31462
+    - m_Data: 31464
+    - m_Data: 31466
+    - m_Data: 31468
+    - m_Data: 31470
+    - m_Data: 31472
+    - m_Data: 31474
+    - m_Data: 31476
+    - m_Data: 31478
+    - m_Data: 31480
+    - m_Data: 31482
     - m_Data: 31484
     - m_Data: 31486
     - m_Data: 31488
     - m_Data: 31490
     - m_Data: 31492
-    - m_Data: 31494
-    - m_Data: 31496
-    - m_Data: 31498
-    - m_Data: 31500
-    - m_Data: 31502
-    - m_Data: 31504
-    - m_Data: 31506
-    - m_Data: 31508
-    - m_Data: 31510
-    - m_Data: 31512
-    - m_Data: 31514
-    - m_Data: 31516
-    - m_Data: 31518
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 

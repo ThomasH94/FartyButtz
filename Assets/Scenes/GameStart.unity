@@ -491,6 +491,10 @@ MonoBehaviour:
       type: 3}
   - MenuPrefab: {fileID: 9122052480282878465, guid: 6465a4b32761159468dca226b2e06f96,
       type: 3}
+  - MenuPrefab: {fileID: 4463988096794574931, guid: 302605762833ab743851c7031ced796f,
+      type: 3}
+  - MenuPrefab: {fileID: 5189057437853482607, guid: b83360e2a05c3934c9a8d78ff04a913b,
+      type: 3}
 --- !u!1 &407177133
 GameObject:
   m_ObjectHideFlags: 0
@@ -1311,7 +1315,10 @@ MonoBehaviour:
     Prefab: {fileID: 0}
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
-    SerializationNodes: []
+    SerializationNodes:
+    - Name: m_DefaultButtData
+      Entry: 6
+      Data: 
   m_DontDestroyOnLoad: 1
 --- !u!1 &1851226332
 GameObject:

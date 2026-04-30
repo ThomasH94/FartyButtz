@@ -356,6 +356,19 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: iOS
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
@@ -1306,7 +1319,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: UI-pack_Sprite_1_43
+      name: UI_SectionDivider
       rect:
         serializedVersion: 2
         x: 1277
@@ -1592,7 +1605,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: UI-pack_Sprite_1_56
+      name: UI_Store_Coin_BG
       rect:
         serializedVersion: 2
         x: 1117
@@ -1614,11 +1627,11 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: UI_Panel_Blue
+      name: UI_Store_Gem_BG
       rect:
         serializedVersion: 2
         x: 1474
-        y: 359
+        y: 361
         width: 319
         height: 414
       alignment: 0
@@ -2168,7 +2181,6 @@ TextureImporter:
       UI-pack_Sprite_1_34: 5195824577459950565
       UI-pack_Sprite_1_36: 3288187814335824193
       UI-pack_Sprite_1_37: 141353405688747159
-      UI-pack_Sprite_1_43: -8008060877100151540
       UI-pack_Sprite_1_44: -1541865002599254229
       UI-pack_Sprite_1_45: -1996936005633665729
       UI-pack_Sprite_1_46: -4441273924919490741
@@ -2178,7 +2190,6 @@ TextureImporter:
       UI-pack_Sprite_1_52: 6841100256711490664
       UI-pack_Sprite_1_54: -4668685142620104677
       UI-pack_Sprite_1_55: -5680990995697710469
-      UI-pack_Sprite_1_56: -1322916990549689837
       UI-pack_Sprite_1_58: 8129546141101418081
       UI-pack_Sprite_1_59: -6515249099007052161
       UI-pack_Sprite_1_60: 4293372491879573125
@@ -2232,10 +2243,12 @@ TextureImporter:
       UI_Icon_Store: 1294846321271332230
       UI_Icon_Wheel: 9193740790039701779
       UI_Minus_Small: -4706323772729162963
-      UI_Panel_Blue: -8902363998838629117
       UI_Plus_Large: -4397067417511678160
       UI_Plus_Small: 7693597132497734403
       UI_Remove_Ads: 7904562582451400195
+      UI_SectionDivider: -8008060877100151540
+      UI_Store_Coin_BG: -1322916990549689837
+      UI_Store_Gem_BG: -8902363998838629117
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

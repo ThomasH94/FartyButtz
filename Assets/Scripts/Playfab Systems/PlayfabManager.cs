@@ -12,6 +12,7 @@ public class PlayFabManager : SingletonMonoBehaviour<PlayFabManager>
     [SerializeField] private string titleID = "YOUR_TITLE_ID";
 
     public bool IsLoggedIn { get; private set; } = false;
+    public bool IsNewAccount { get; private set; } = false;
     public string PlayFabId { get; private set; }
     public string DisplayName { get; private set; }
 

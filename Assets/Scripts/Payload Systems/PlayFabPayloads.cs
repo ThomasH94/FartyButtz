@@ -131,57 +131,83 @@ public class LeaderboardLoadedPayload
 // ECONOMY PAYLOADS
 // =============================================================================
 
-/// <summary>Published when currency balances and inventory are loaded/refreshed.</summary>
-public class InventoryLoadedPayload
+/// <summary>
+/// Published whenever the player's account state is refreshed from PlayFab.
+/// This is the single source of truth — any UI that shows currency, inventory,
+/// or ownership should subscribe to this and redraw from it.
+/// Covers: login load, post-purchase, post-grant, post-IAP, post-ad.
+/// </summary>
+public class PlayerAccountRefreshedPayload
 {
     public int CoinBalance { get; }
     public int GemBalance { get; }
     public List<string> OwnedItemIds { get; }
 
-    public InventoryLoadedPayload(int coinBalance, int gemBalance, List<string> ownedItemIds)
+    public PlayerAccountRefreshedPayload(int coinBalance, int gemBalance, List<string> ownedItemIds)
     {
-        CoinBalance = coinBalance;
-        GemBalance = gemBalance;
+        CoinBalance  = coinBalance;
+        GemBalance   = gemBalance;
         OwnedItemIds = ownedItemIds;
     }
 }
 
-/// <summary>Published when a cosmetic item is successfully purchased.</summary>
-public class ItemPurchasedPayload
+/// <summary>
+/// Published when a CloudScript grant call completes successfully.
+/// Carries what was granted so UI can show feedback ("+100 Coins!").
+/// Always followed by a PlayerAccountRefreshedPayload once LoadInventory() completes.
+/// </summary>
+public class AccountGrantSuccessPayload
+{
+    public string ItemId { get; }        // PlayFab item ID, or currency code ("CN"/"GM")
+    public int Amount { get; }           // 0 for non-stackable items
+    public bool IsCurrency { get; }
+
+    public AccountGrantSuccessPayload(string itemId, int amount, bool isCurrency)
+    {
+        ItemId     = itemId;
+        Amount     = amount;
+        IsCurrency = isCurrency;
+    }
+}
+
+/// <summary>
+/// Published when any purchase completes — currency buy, skin buy, IAP.
+/// Subscribers only need to care about the item ID and how it was paid for.
+/// Always followed by a PlayerAccountRefreshedPayload.
+/// </summary>
+public class PurchaseSuccessPayload
 {
     public string ItemId { get; }
     public int CoinCost { get; }
     public int GemCost { get; }
+    public bool WasRealMoney { get; }
 
-    public ItemPurchasedPayload(string itemId, int coinCost, int gemCost)
+    public PurchaseSuccessPayload(string itemId, int coinCost = 0, int gemCost = 0, bool wasRealMoney = false)
     {
-        ItemId = itemId;
-        CoinCost = coinCost;
-        GemCost = gemCost;
+        ItemId       = itemId;
+        CoinCost     = coinCost;
+        GemCost      = gemCost;
+        WasRealMoney = wasRealMoney;
     }
 }
 
-/// <summary>Published when a purchase attempt fails.</summary>
-public class ItemPurchaseFailedPayload
+/// <summary>
+/// Published when any purchase or grant fails for any reason.
+/// ItemId may be a currency code or catalog item ID.
+/// </summary>
+public class PurchaseFailedPayload
 {
     public string ItemId { get; }
     public string ErrorMessage { get; }
 
-    public ItemPurchaseFailedPayload(string itemId, string errorMessage)
+    public PurchaseFailedPayload(string itemId, string errorMessage)
     {
-        ItemId = itemId;
+        ItemId       = itemId;
         ErrorMessage = errorMessage;
     }
 }
 
-/// <summary>Published when a rewarded ad successfully grants currency.</summary>
-public class AdRewardGrantedPayload
-{
-    public int CoinsGranted { get; }
-    public AdRewardGrantedPayload(int coinsGranted) => CoinsGranted = coinsGranted;
-}
-
-/// <summary>Published when a real-money IAP is validated and fulfilled.</summary>
+/// <summary>Published when a real-money IAP is validated and fulfilled by PlayFab.</summary>
 public class IAPValidatedPayload
 {
     public string ProductId { get; }

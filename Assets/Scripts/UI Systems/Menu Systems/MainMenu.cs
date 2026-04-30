@@ -13,21 +13,30 @@ public class MainMenu : BaseMenu
     private SceneData m_TESTSCENE;
     
     [SerializeField]
-    private Button m_PlayButton = null;
+    private ExtendedButton m_PlayButton = null;
+    [SerializeField]
+    private ExtendedButton m_InventoryButton = null;
     
     [SerializeField]
-    private Button m_StoreButton = null;
+    private ExtendedButton m_StoreButton = null;
 
     private void Start()
     {
-        m_PlayButton.onClick.AddListener
-        (() =>
-            {
-                OnPlayButtonPressed();
-            }
-        );
+        m_PlayButton.RegisterClickAction(OnPlayButtonPressed);
+        m_StoreButton.RegisterClickAction(OnStoreButtonClicked);
+        m_InventoryButton.RegisterClickAction(OnInventoryClicked);
     }
-    
+
+    private void OnInventoryClicked()
+    {
+        EventBus.Publish(new MenuRequestOpenPayload(typeof(AvatarSelectionMenu), null));
+    }
+
+    private void OnStoreButtonClicked()
+    {
+        EventBus.Publish(new MenuRequestOpenPayload(typeof(StoreMenu), null));
+    }
+
     public override void OnOpen(IMenuData data)
     {
         base.OnOpen(data);

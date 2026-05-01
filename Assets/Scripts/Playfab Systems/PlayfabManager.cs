@@ -36,6 +36,7 @@ public class PlayFabManager : SingletonMonoBehaviour<PlayFabManager>
         PlayFabId = playfabId;
         DisplayName = displayName;
         IsLoggedIn = true;
+        IsNewAccount = isNewAccount;
         EventBus.Publish(new PlayFabLoginSuccessPayload(playfabId, displayName, isNewAccount));
         Debug.Log($"[PlayFab] Logged in — {displayName} ({playfabId}), newAccount={isNewAccount}");
     }
@@ -47,6 +48,7 @@ public class PlayFabManager : SingletonMonoBehaviour<PlayFabManager>
         PlayFabId = null;
         DisplayName = null;
         IsLoggedIn = false;
+        IsNewAccount = false;
         EventBus.Publish(new PlayFabLogoutPayload());
         Debug.Log("[PlayFab] Logged out.");
     }

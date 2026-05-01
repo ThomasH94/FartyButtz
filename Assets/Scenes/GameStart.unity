@@ -1310,15 +1310,16 @@ MonoBehaviour:
   serializationData:
     SerializedFormat: 2
     SerializedBytes: 
-    ReferencedUnityObjects: []
+    ReferencedUnityObjects:
+    - {fileID: 11400000, guid: 321247a24d7e6fe40bc7dbc1796e6326, type: 2}
     SerializedBytesString: 
     Prefab: {fileID: 0}
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
     SerializationNodes:
     - Name: m_DefaultButtData
-      Entry: 6
-      Data: 
+      Entry: 10
+      Data: 0
   m_DontDestroyOnLoad: 1
 --- !u!1 &1851226332
 GameObject:

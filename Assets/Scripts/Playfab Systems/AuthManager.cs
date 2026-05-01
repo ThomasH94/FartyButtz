@@ -111,6 +111,7 @@ public class AuthManager : SingletonMonoBehaviour<AuthManager>
             result => {
                 Debug.Log($"[Auth] Registration success: {result.PlayFabId}");
                 EventBus.Publish(new PlayFabRegisterSuccessPayload(result.PlayFabId));
+                _pendingIsNewAccount = true; // Flag so the auto-login below correctly identifies this as a new account
                 LoginWithEmail(email, password);
             },
             error => {
@@ -217,6 +218,11 @@ public class AuthManager : SingletonMonoBehaviour<AuthManager>
     private enum PendingLoginType { Silent, Guest, Email, Platform }
     private PendingLoginType _pendingLoginType = PendingLoginType.Guest;
 
+    // Set to true during RegisterWithEmail so the subsequent auto-login
+    // correctly identifies the account as new — LoginWithEmail always
+    // returns NewlyCreated=false since the account already exists by then.
+    private bool _pendingIsNewAccount = false;
+
     private void OnLoginSuccess(LoginResult result)
     {
         string displayName = result.InfoResultPayload?.PlayerProfile?.DisplayName ?? "Player";
@@ -246,7 +252,13 @@ public class AuthManager : SingletonMonoBehaviour<AuthManager>
                 break;
         }
 
-        PlayFabManager.Instance.SetLoginState(result.PlayFabId, displayName, result.NewlyCreated);
+        // Use the pending flag if set (registration flow), otherwise trust PlayFab's value.
+        // LoginWithEmail after RegisterPlayFabUser always returns NewlyCreated=false
+        // because the account already exists by the time we log into it.
+        bool isNewAccount = _pendingIsNewAccount || result.NewlyCreated;
+        _pendingIsNewAccount = false;
+
+        PlayFabManager.Instance.SetLoginState(result.PlayFabId, displayName, isNewAccount);
     }
 
     /// <summary>
@@ -271,7 +283,8 @@ public class AuthManager : SingletonMonoBehaviour<AuthManager>
 
     private void OnLoginFailed(PlayFabError error)
     {
-        _pendingLoginType = PendingLoginType.Guest; // Reset so retries start clean
+        _pendingLoginType    = PendingLoginType.Guest;
+        _pendingIsNewAccount = false;
         Debug.LogError($"[Auth] Login failed: {error.ErrorMessage}");
         EventBus.Publish(new PlayFabLoginFailedPayload(error.ErrorMessage));
     }

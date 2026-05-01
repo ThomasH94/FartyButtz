@@ -21,6 +21,10 @@ MonoBehaviour:
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
     SerializationNodes: []
-  PlayFabItemId: 
+  ID: 1
+  displayName: Bird Butt
+  PlayFabItemId: butt_bird
+  CoinCost: 100
+  GemCost: 50
   ButtSprite: {fileID: 21300000, guid: 4b4a57de377138e4e8369d8145550062, type: 3}
   FartSFX: {fileID: 11400000, guid: 924a653e9d2f6f448b656d79dda710ea, type: 2}

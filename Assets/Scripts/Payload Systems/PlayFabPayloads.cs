@@ -71,7 +71,14 @@ public class PlayFabAccountLinkFailedPayload
     }
 }
 
-/// <summary>Published when the player logs out.</summary>
+/// <summary>
+/// Publish this from anywhere to request a logout.
+/// GameManager handles it — calls PlayFabManager.Logout() and shows LoginMenu.
+/// e.g. a Settings button: EventBus.Publish(new LogoutRequestPayload())
+/// </summary>
+public class LogoutRequestPayload { }
+
+/// <summary>Published when the player has been logged out. UI can react to this to reset state.</summary>
 public class PlayFabLogoutPayload { }
 
 /// <summary>Published when a display name is successfully updated.</summary>
@@ -98,6 +105,17 @@ public class PlayerDataLoadedPayload
         EquippedSkinId = equippedSkinId;
         SoundEnabled = soundEnabled;
     }
+}
+
+/// <summary>
+/// Published when the active skin should be applied to the player character.
+/// Fired on login (from saved data) and whenever the player equips a new skin.
+/// Subscribers (e.g. PlayerCharacter, GameHUD) react by swapping the sprite/sound.
+/// </summary>
+public class SkinApplyRequestPayload
+{
+    public ButtData SkinData { get; }
+    public SkinApplyRequestPayload(ButtData skinData) => SkinData = skinData;
 }
 
 /// <summary>Published when the player sets a new high score.</summary>

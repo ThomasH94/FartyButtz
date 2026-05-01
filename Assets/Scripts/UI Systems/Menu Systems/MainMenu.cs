@@ -19,12 +19,16 @@ public class MainMenu : BaseMenu
     
     [SerializeField]
     private ExtendedButton m_StoreButton = null;
+    
+    [SerializeField]
+    private ExtendedButton m_LogoutButton = null;
 
     private void Start()
     {
         m_PlayButton.RegisterClickAction(OnPlayButtonPressed);
         m_StoreButton.RegisterClickAction(OnStoreButtonClicked);
         m_InventoryButton.RegisterClickAction(OnInventoryClicked);
+        m_LogoutButton.RegisterClickAction(OnLogoutClicked);
     }
 
     private void OnInventoryClicked()
@@ -35,6 +39,11 @@ public class MainMenu : BaseMenu
     private void OnStoreButtonClicked()
     {
         EventBus.Publish(new MenuRequestOpenPayload(typeof(StoreMenu), null));
+    }
+    
+    private void OnLogoutClicked()
+    {
+        EventBus.Publish(new LogoutRequestPayload());
     }
 
     public override void OnOpen(IMenuData data)

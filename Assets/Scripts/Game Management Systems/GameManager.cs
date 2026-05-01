@@ -25,6 +25,9 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
         EventBus.Subscribe<PlayFabLoginFailedPayload>(OnLoginFailed);
         EventBus.Subscribe<PlayFabSilentLoginFailedPayload>(OnSilentLoginFailed);
         EventBus.Subscribe<PlayerDataLoadedPayload>(OnPlayerDataLoaded);
+        EventBus.Subscribe<LogoutRequestPayload>(OnLogoutRequested);
+        EventBus.Subscribe<PlayerSkinEquippedPayload>(OnSkinEquipped);
+        EventBus.Subscribe<PlayerAccountRefreshedPayload>(OnAccountRefreshed);
     }
 
     private void Start()
@@ -43,18 +46,51 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
 
     // -------------------------------------------------------------------------
     // POST-LOGIN SEQUENCE
+    // PlayerData loads first, then inventory. Sequenced rather than parallel
+    // so IsNewAccount and EquippedSkinId are always set before inventory callback runs.
     // -------------------------------------------------------------------------
     private void OnLoginSuccess(PlayFabLoginSuccessPayload payload)
     {
-        Debug.Log($"[GameManager] Login OK — {payload.DisplayName}. Loading data...");
+        Debug.Log($"[GameManager] Login OK — {payload.DisplayName}. Loading player data...");
         PlayerDataManager.Instance.LoadPlayerData();
-        EconomyManager.Instance.LoadInventory();
     }
 
     private void OnPlayerDataLoaded(PlayerDataLoadedPayload payload)
     {
-        Debug.Log("[GameManager] All data loaded. Opening main menu.");
+        Debug.Log("[GameManager] Player data loaded. Loading inventory...");
+        EconomyManager.Instance.LoadInventory();
+    }
+
+    private void OnSkinEquipped(PlayerSkinEquippedPayload payload)
+        => ApplySkin(payload.SkinItemId);
+
+    // Called when inventory finishes loading — this is the true "ready" signal.
+    // Only open MainMenu on the first load after login, not on every refresh.
+    private bool m_HasOpenedMainMenu = false;
+
+    private void OnAccountRefreshed(PlayerAccountRefreshedPayload payload)
+    {
+        if (m_HasOpenedMainMenu) return;
+        m_HasOpenedMainMenu = true;
+
+        Debug.Log("[GameManager] Inventory loaded. Game ready — opening main menu.");
+        ApplySkin(PlayerDataManager.Instance.EquippedSkinId);
         EventBus.Publish(new MenuRequestOpenPayload(typeof(MainMenu), null));
+    }
+
+    private void ApplySkin(string skinItemId)
+    {
+        if (string.IsNullOrEmpty(skinItemId)) return;
+
+        var skin = ButtDB.Instance?.GetByPlayFabId(skinItemId);
+        if (skin == null)
+        {
+            Debug.LogWarning($"[GameManager] Equipped skin '{skinItemId}' not found in ButtDB.");
+            return;
+        }
+
+        Debug.Log($"[GameManager] Applying skin: {skin.displayName}");
+        EventBus.Publish(new SkinApplyRequestPayload(skin));
     }
 
     // -------------------------------------------------------------------------
@@ -80,6 +116,18 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
         ShowLoginMenu();
     }
 
+    /// <summary>
+    /// Triggered by anything publishing LogoutRequestPayload (settings button, debug menu, etc.)
+    /// Clears the session, resets manager state, and returns to the login screen.
+    /// </summary>
+    private void OnLogoutRequested(LogoutRequestPayload payload)
+    {
+        Debug.Log("[GameManager] Logout requested.");
+        m_HasOpenedMainMenu = false;
+        PlayFabManager.Instance.Logout();
+        ShowLoginMenu();
+    }
+
     // -------------------------------------------------------------------------
     // HELPERS
     // -------------------------------------------------------------------------
@@ -94,5 +142,8 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
         EventBus.Unsubscribe<PlayFabLoginFailedPayload>(OnLoginFailed);
         EventBus.Unsubscribe<PlayFabSilentLoginFailedPayload>(OnSilentLoginFailed);
         EventBus.Unsubscribe<PlayerDataLoadedPayload>(OnPlayerDataLoaded);
+        EventBus.Unsubscribe<LogoutRequestPayload>(OnLogoutRequested);
+        EventBus.Unsubscribe<PlayerSkinEquippedPayload>(OnSkinEquipped);
+        EventBus.Unsubscribe<PlayerAccountRefreshedPayload>(OnAccountRefreshed);
     }
 }

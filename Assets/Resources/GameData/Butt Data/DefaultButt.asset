@@ -21,6 +21,10 @@ MonoBehaviour:
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
     SerializationNodes: []
-  ButtSprite: {fileID: 3032945103801257651, guid: 1c38cb60d7f67a74c9aa57c8c5b69940,
-    type: 3}
+  ID: 0
+  displayName: Farty Butt
+  PlayFabItemId: butt_default
+  CoinCost: 0
+  GemCost: 0
+  ButtSprite: {fileID: 21300000, guid: 1c38cb60d7f67a74c9aa57c8c5b69940, type: 3}
   FartSFX: {fileID: 11400000, guid: 924a653e9d2f6f448b656d79dda710ea, type: 2}

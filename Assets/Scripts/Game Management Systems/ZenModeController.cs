@@ -7,6 +7,8 @@ public class ZenModeController : AbstractGameMode
     #region DEBUG
 
     public bool INVINCIBLE  = false;
+    public GameObject playButton;
+    public GameObject gameOver;
 
     #endregion
     
@@ -41,14 +43,14 @@ public class ZenModeController : AbstractGameMode
 
     private void Start()
     {
-        SetupPlayer(PlayerController);
+        InitializePlayer(PlayerController);
         Pause();
     }
 
     public void Pause()
     {
         Time.timeScale = 0f;
-        mPlayerController.enabled = false;
+        m_PlayerController.enabled = false;
     }
 
     public void Play()
@@ -60,7 +62,7 @@ public class ZenModeController : AbstractGameMode
         gameOver.SetActive(false);
 
         Time.timeScale = 1f;
-        mPlayerController.enabled = true;
+        m_PlayerController.enabled = true;
 
         Pipes[] pipes = FindObjectsOfType<Pipes>();
 
@@ -81,5 +83,25 @@ public class ZenModeController : AbstractGameMode
     {
         m_CurrentScore += scoreAmount;
         m_ScoreText.text = $"{m_CurrentScore}";
+    }
+
+    public override void StartGame()
+    {
+
+    }
+
+    public override void PauseGame()
+    {
+
+    }
+
+    public override void EndGame()
+    {
+
+    }
+
+    public override void OnScoreChanged(int newScore)
+    {
+
     }
 }

@@ -1,82 +1,58 @@
-﻿using Sirenix.OdinInspector;
-using Sirenix.Serialization;
+﻿// Handles ONLY physics/movement math. No input, no mode logic.
+
+using System.Collections.Generic;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 public class PlayerController : SerializedMonoBehaviour
 {
-    #region DEBUG
-
-    public ButtData DEBUGBUTTDATA;
-    #endregion
-    
-    public Sprite[] sprites;
     public float strength = 5f;
     public float gravity = -9.81f;
     public float tilt = 5f;
 
-    [OdinSerialize]
-    private SpriteRenderer spriteRenderer;
-    private Vector3 direction;
-    private int spriteIndex;
-    private ButtData m_ButtData;
-    private SfxData m_FartAudio;
-
-    private void Start()
-    {
-        //InvokeRepeating(nameof(AnimateSprite), 0.15f, 0.15f);
-    }
-
-    private void OnEnable()
-    {
-        Vector3 position = transform.position;
-        position.y = 0f;
-        transform.position = position;
-        direction = Vector3.zero;
-        
-        SetupButt(DEBUGBUTTDATA);
-    }
+    private Vector3 m_Direction;
+    private SpriteRenderer m_SpriteRenderer;
     
-    private void SetupButt(ButtData buttData)
+    private List<IPlayerAbility> m_Abilities = new List<IPlayerAbility>();
+
+    public void Initialize(ButtData buttData)
     {
-        m_ButtData = buttData;
-        spriteRenderer.sprite = m_ButtData.ButtSprite;
-        m_FartAudio = buttData.FartSFX;
+        m_SpriteRenderer.sprite = buttData.ButtSprite;
+        // etc.
     }
+
+    // Called by input handler or game mode — not by Update directly
+    public void Fart()
+    {
+        m_Direction = Vector3.up * strength;
+        // play audio via event or direct call
+        EventBus.Publish(new PlayerFartPayload());
+    }
+
+    public void SetMovementEnabled(bool enabled) => this.enabled = enabled;
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0))
-        {
-            Fart();
-        }
+        m_Direction.y += gravity * Time.deltaTime;
+        transform.position += m_Direction * Time.deltaTime;
 
-        // Apply gravity and update the position
-        direction.y += gravity * Time.deltaTime;
-        transform.position += direction * Time.deltaTime;
-
-        // Tilt the bird based on the direction
         Vector3 rotation = transform.eulerAngles;
-        rotation.z = direction.y * tilt;
+        rotation.z = m_Direction.y * tilt;
         transform.eulerAngles = rotation;
     }
 
-    private void Fart()
+    public void AddAbility(IPlayerAbility ability)
     {
-        direction = Vector3.up * strength;
-        AudioManager.Instance.PlaySFX(m_FartAudio);
+        
     }
 
-    private void AnimateSprite()
+    public void ClearAbilities()
     {
-        spriteIndex++;
-
-        if (spriteIndex >= sprites.Length) {
-            spriteIndex = 0;
-        }
-
-        if (spriteIndex < sprites.Length && spriteIndex >= 0) {
-            spriteRenderer.sprite = sprites[spriteIndex];
-        }
+        m_Abilities.Clear();
     }
 
+    public void SetGravityDirection(Vector2 direction)
+    {
+        
+    }
 }

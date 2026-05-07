@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Sirenix.Serialization;
 using UnityEngine;
 
-public class AscensionModeController : AbstractGameMode
+public class AscensionModeControllerController : AbstractGameModeController
 {
     public override void StartGame()
     {
@@ -31,7 +31,7 @@ public class AscensionModeController : AbstractGameMode
 }
 
 // Boss Rush injects abilities
-public class BossRushModeController : AbstractGameMode
+public class BossRushModeControllerController : AbstractGameModeController
 {
     [OdinSerialize] private List<IPlayerAbility> m_StartingAbilities;
 

@@ -2,6 +2,7 @@
 
 using System.Collections.Generic;
 using Sirenix.OdinInspector;
+using Sirenix.Serialization;
 using UnityEngine;
 
 public class PlayerController : SerializedMonoBehaviour
@@ -10,8 +11,8 @@ public class PlayerController : SerializedMonoBehaviour
     public float gravity = -9.81f;
     public float tilt = 5f;
 
-    private Vector3 m_Direction;
-    private SpriteRenderer m_SpriteRenderer;
+    private Vector3 m_Direction = Vector3.zero;
+    [OdinSerialize] private SpriteRenderer m_SpriteRenderer = null;
     
     private List<IPlayerAbility> m_Abilities = new List<IPlayerAbility>();
 

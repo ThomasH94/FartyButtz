@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 
 [Serializable]
-public class ZenModeController : AbstractGameMode
+public class ZenModeController : AbstractGameModeController
 {
     #region DEBUG
 
@@ -66,15 +66,19 @@ public class ZenModeController : AbstractGameMode
 
         Pipes[] pipes = FindObjectsOfType<Pipes>();
 
-        for (int i = 0; i < pipes.Length; i++) {
+        for (int i = 0; i < pipes.Length; i++) 
+        {
             Destroy(pipes[i].gameObject);
         }
+        
+        m_InputHandler.enabled  = true;
     }
 
     public void GameOver()
     {
         playButton.SetActive(true);
         gameOver.SetActive(true);
+        m_InputHandler.enabled = false;
 
         Pause();
     }

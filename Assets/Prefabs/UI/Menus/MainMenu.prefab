@@ -1215,6 +1215,7 @@ MonoBehaviour:
     SerializedBytes: 
     ReferencedUnityObjects:
     - {fileID: 11400000, guid: 8275c2d3ba565f54090369e4cd08ccb3, type: 2}
+    - {fileID: 4085166756329838471}
     SerializedBytesString: 
     Prefab: {fileID: 0}
     PrefabModificationsReferencedUnityObjects: []
@@ -1223,6 +1224,9 @@ MonoBehaviour:
     - Name: m_TESTSCENE
       Entry: 10
       Data: 0
+    - Name: m_AvatarIcon
+      Entry: 10
+      Data: 1
   m_ContentRect: {fileID: 5415961363794501338}
   m_CloseButton: {fileID: 0}
   m_PlayButton: {fileID: 5155913733951399920}

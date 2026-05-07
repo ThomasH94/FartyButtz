@@ -56,7 +56,7 @@ public class StoreButtWidget : SerializedMonoBehaviour
         if (m_SkinData == null) return;
 
         bool owned    = EconomyManager.Instance.OwnsItem(m_SkinData.PlayFabItemId);
-        bool equipped = PlayerDataManager.Instance.EquippedSkinId == m_SkinData.PlayFabItemId;
+        bool equipped = PlayerDataManager.Instance.GetEquippedSkin().PlayFabItemId == m_SkinData.PlayFabItemId;
 
         // Preview
         if (m_SkinPreview != null)

@@ -12,6 +12,9 @@ public class MainMenu : BaseMenu
     [OdinSerialize] 
     private SceneData m_TESTSCENE;
     
+    [OdinSerialize]
+    private Image m_AvatarIcon  = null;
+    
     [SerializeField]
     private ExtendedButton m_PlayButton = null;
     [SerializeField]
@@ -29,6 +32,18 @@ public class MainMenu : BaseMenu
         m_StoreButton.RegisterClickAction(OnStoreButtonClicked);
         m_InventoryButton.RegisterClickAction(OnInventoryClicked);
         m_LogoutButton.RegisterClickAction(OnLogoutClicked);
+    }
+
+    protected override void OnEnable()
+    {
+        base.OnEnable();
+        EventBus.Subscribe<SkinApplyRequestPayload>(UpdateAvatar);
+    }
+
+    protected override void OnDisable()
+    {
+        base.OnDisable();
+        EventBus.Unsubscribe<SkinApplyRequestPayload>(UpdateAvatar);
     }
 
     private void OnInventoryClicked()
@@ -50,6 +65,17 @@ public class MainMenu : BaseMenu
     {
         base.OnOpen(data);
         MainMenuData mainMenuData = data as MainMenuData;
+        UpdateAvatar(PlayerDataManager.Instance.GetEquippedSkin().ButtSprite);
+    }
+
+    private void UpdateAvatar(SkinApplyRequestPayload payload)
+    {
+         UpdateAvatar(payload.SkinData.ButtSprite);
+    }
+
+    private void UpdateAvatar(Sprite buttSprite)
+    {
+        m_AvatarIcon.sprite = buttSprite;
     }
 
     private void OnPlayButtonPressed()

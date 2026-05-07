@@ -26,6 +26,7 @@ public class EconomyManager : SingletonMonoBehaviour<EconomyManager>
 {
     #region New Player Account Items
 
+    // This needs to come from Playfab, this shouldn't be authorized from the Client as it's prone to error
     [OdinSerialize] private ButtData m_DefaultButtData = null;
     // Add more default items here as the game grows (starter coins, titles, etc.)
 

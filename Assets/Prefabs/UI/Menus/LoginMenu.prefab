@@ -1360,8 +1360,9 @@ GameObject:
   - component: {fileID: 1627297824062759857}
   - component: {fileID: 4396635117814208683}
   - component: {fileID: 6408198082202768883}
+  - component: {fileID: 3601104551945662388}
   m_Layer: 5
-  m_Name: Back_TMP
+  m_Name: Login_TMP
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1414,7 +1415,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Login
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 324ab856458188e4da4cd99a82c0d4ed, type: 2}
   m_sharedMaterial: {fileID: -5378660555845241580, guid: 324ab856458188e4da4cd99a82c0d4ed,
@@ -1442,7 +1443,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 72
+  m_fontSize: 36
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -1487,6 +1488,24 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &3601104551945662388
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3915903501646162808}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5bdfb061ba934be468610a06cec34932, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LocalizedText
+  Key: LOGIN
+  Arguments: []
+  OverrideFont: 1
+  references:
+    version: 2
+    RefIds: []
 --- !u!1 &4692131370490918623
 GameObject:
   m_ObjectHideFlags: 0

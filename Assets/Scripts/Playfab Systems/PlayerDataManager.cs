@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using PlayFab;
 using PlayFab.ClientModels;
@@ -17,7 +18,7 @@ public class PlayerDataManager : SingletonMonoBehaviour<PlayerDataManager>
 {
     // Cached values — read these locally, don't poll PlayFab
     public int HighScore { get; private set; }
-    public string EquippedSkinId { get; private set; } = "skin_default";
+    public string EquippedSkinId { get; private set; } = string.Empty; // Empty until loaded from PlayFab
     public bool SoundEnabled { get; private set; } = true;
 
     // UserData keys
@@ -30,6 +31,21 @@ public class PlayerDataManager : SingletonMonoBehaviour<PlayerDataManager>
 
     protected override void Awake() => base.Awake();
 
+    private void OnEnable()
+    {
+        EventBus.Subscribe<SkinApplyRequestPayload>(OnSkinUpdated);
+    }
+
+    private void OnDisable()
+    {
+        EventBus.Unsubscribe<SkinApplyRequestPayload>(OnSkinUpdated);
+    }
+    
+    private void OnSkinUpdated(SkinApplyRequestPayload payload)
+    {
+        SetEquippedSkin(payload.SkinData.PlayFabItemId);
+    }
+
     // -------------------------------------------------------------------------
     // LOAD — call once after login (GameManager handles sequencing)
     // -------------------------------------------------------------------------
@@ -40,13 +56,10 @@ public class PlayerDataManager : SingletonMonoBehaviour<PlayerDataManager>
             {
                 Keys = new List<string> { KEY_HIGH_SCORE, KEY_EQUIPPED_SKIN, KEY_SOUND_ENABLED }
             },
-            result =>
-            {
+            result => {
                 if (result.Data.TryGetValue(KEY_HIGH_SCORE, out var hs))
-                {
-                    int.TryParse(hs.Value, out int parsed);
-                    HighScore = parsed;   
-                }
+                    if (int.TryParse(hs.Value, out int parsed))
+                        HighScore = parsed;
 
                 if (result.Data.TryGetValue(KEY_EQUIPPED_SKIN, out var skin))
                     EquippedSkinId = skin.Value;
@@ -119,6 +132,25 @@ public class PlayerDataManager : SingletonMonoBehaviour<PlayerDataManager>
             },
             error => Debug.LogError($"[PlayerData] Equip save failed: {error.ErrorMessage}")
         );
+    }
+
+    /// <summary>
+    /// Returns the ButtData for the currently equipped skin.
+    /// Always looks up by PlayFab Item ID — the canonical identifier.
+    /// Falls back to ButtDB.DefaultSkin if nothing is equipped or the ID
+    /// isn't found (e.g. first login before GiveNewAccountItems completes).
+    /// </summary>
+    public ButtData GetEquippedSkin()
+    {
+        if (!string.IsNullOrEmpty(EquippedSkinId))
+        {
+            var skin = ButtDB.Instance?.GetByPlayFabId(EquippedSkinId);
+            if (skin != null) return skin;
+
+            Debug.LogWarning($"[PlayerData] Equipped skin '{EquippedSkinId}' not found in ButtDB — using default.");
+        }
+
+        return ButtDB.Instance?.DefaultSkin;
     }
 
     // -------------------------------------------------------------------------

@@ -1,26 +1,42 @@
 using System.Collections.Generic;
+using PlayFab.ClientModels;
 using Sirenix.Serialization;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class AvatarSelectionMenu : BaseMenu
 {
+    [OdinSerialize] private Image m_AvatarIcon = null;
     [OdinSerialize] private AvatarSelectionWidget m_TemplateWidget  = null;
     [OdinSerialize] private Transform             m_WidgetContainer = null;
 
     private readonly List<AvatarSelectionWidget> m_SpawnedWidgets = new();
+    private ButtData m_ButtData = null;
+
+    protected override void OnEnable()
+    {
+        base.OnEnable();
+        EventBus.Subscribe<SkinApplyRequestPayload>(OnSkinUpdateRequest);
+        EventBus.Subscribe<PlayerAccountRefreshedPayload>(OnAccountRefreshed);
+    }
 
     public override void OnOpen(IMenuData data)
     {
         base.OnOpen(data);
-        EventBus.Subscribe<PlayerAccountRefreshedPayload>(OnAccountRefreshed);
+        m_ButtData = PlayerDataManager.Instance.GetEquippedSkin();
         SetupWidgets();
+        UpdateAvatar(m_ButtData);
+    }
+    
+    private void OnSkinUpdateRequest(SkinApplyRequestPayload payload)
+    {
+        UpdateAvatar(payload.SkinData);
     }
 
-    public override void OnClose()
+    private void UpdateAvatar(ButtData buttData)
     {
-        base.OnClose();
-        EventBus.Unsubscribe<PlayerAccountRefreshedPayload>(OnAccountRefreshed);
-        ClearWidgets();
+        m_ButtData = buttData;
+        m_AvatarIcon.sprite = m_ButtData.ButtSprite;
     }
 
     // -------------------------------------------------------------------------
@@ -54,8 +70,9 @@ public class AvatarSelectionMenu : BaseMenu
         {
             var widget = Instantiate(m_TemplateWidget, m_WidgetContainer);
             widget.gameObject.SetActive(true);
-            widget.Setup(skin);
+            widget.Initialize(skin);
             m_SpawnedWidgets.Add(widget);
+            widget.SetEquippedState();
         }
 
         Debug.Log($"[AvatarSelectionMenu] Populated {m_SpawnedWidgets.Count} owned skins.");
@@ -63,6 +80,14 @@ public class AvatarSelectionMenu : BaseMenu
 
     // Re-populate if a purchase completes while this menu is open
     private void OnAccountRefreshed(PlayerAccountRefreshedPayload payload) => SetupWidgets();
+    
+        
+    public override void OnClose()
+    {
+        base.OnClose();
+        EventBus.Unsubscribe<PlayerAccountRefreshedPayload>(OnAccountRefreshed);
+        ClearWidgets();
+    }
 
     private void ClearWidgets()
     {
